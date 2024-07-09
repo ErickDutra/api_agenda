@@ -39,8 +39,8 @@ public class Agenda {
     private Date horario;
 
     @ManyToMany
-    @Column(name = "id_usuario", nullable = false, length = 150)
-    private Usuarios id_usuario;
+    @Column(name = "usuario", length = 150)
+    private Usuario usuario;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "data_disponivel")
