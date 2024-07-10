@@ -48,9 +48,9 @@ public class AgendaService {
         return new AgendaDto(agendaDb.getId(), agendaDb.getDisponivel(),agendaDb.getHorario(), agendaDb.getUsuario(), agendaDb.getData_disponivel());
     }
 
-    public AgendaDto updateAgenda(Long id, AgendaDto agendaDto, UsuarioDto usuarioDto) {
-        Agenda agenda = agendaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Agenda não encontrada com ID: " + id));
+    public AgendaDto updateAgenda( AgendaDto agendaDto, UsuarioDto usuarioDto) {
+        Agenda agenda = agendaRepository.findById(agendaDto.id())
+                .orElseThrow(() -> new EntityNotFoundException("Agenda não encontrada com ID: " +agendaDto.id()));
 
         agenda.setDisponivel(agendaDto.disponivel());
         agenda.setHorario(agendaDto.horario());
