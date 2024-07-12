@@ -11,6 +11,7 @@ import com.agenda.pessoas.agenda.dto.RoleDto;
 import com.agenda.pessoas.agenda.dto.UsuarioDto;
 import com.agenda.pessoas.agenda.repository.RoleRepository;
 import com.agenda.pessoas.agenda.repository.UsuarioRepository;
+import com.agenda.pessoas.agenda.tables.Role;
 import com.agenda.pessoas.agenda.tables.Usuario;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -21,6 +22,7 @@ public class UsuarioService {
     @Autowired
     private  UsuarioRepository usuarioRepository;
 
+    @Autowired
     private RoleRepository roleRepository;
 
     public List<UsuarioDto> getUsuarios() {
@@ -35,20 +37,30 @@ public class UsuarioService {
         return new UsuarioDto(usuarioDb.getId(), usuarioDb.getNome(), usuarioDb.getCpf(), usuarioDb.getEmail(), usuarioDb.getSenha(), usuarioDb.getDateRegister(), usuarioDb.getRole());
     }
 
-    public UsuarioDto saveUsuario(UsuarioDto usuarioDto, RoleDto roleDto) {
+    public UsuarioDto saveUsuario(UsuarioDto usuarioDto, Long roleId) {
+    Usuario usuario = new Usuario();
 
-        Usuario usuario = new Usuario();
+    usuario.setNome(usuarioDto.nome());
+    usuario.setCpf(usuarioDto.cpf());
+    usuario.setEmail(usuarioDto.email());
+    usuario.setSenha(usuarioDto.senha());
+    usuario.setDateRegister(Date.from(Instant.now()));
 
-        usuario.setNome(usuarioDto.nome());
-        usuario.setCpf(usuarioDto.cpf());
-        usuario.setEmail(usuarioDto.email());
-        usuario.setSenha(usuarioDto.senha());
-        usuario.setDateRegister(Date.from(Instant.now()));
-        usuario.setRole(roleRepository.findById(roleDto.id())
-                        .orElseThrow(() -> new EntityNotFoundException("Role não encontrada com ID: " + roleDto.id())));
-        Usuario usuarioDb = usuarioRepository.save(usuario);
+    Role role = roleRepository.findById(roleId)
+                    .orElseThrow(() -> new EntityNotFoundException("Role não encontrada com ID: " + roleId));
+    usuario.setRole(role);
 
-        return new UsuarioDto(usuarioDb.getId(), usuarioDb.getNome(), usuarioDb.getCpf(), usuarioDb.getEmail(), usuarioDb.getSenha(), usuarioDb.getDateRegister(), usuarioDb.getRole());
+    Usuario usuarioDb = usuarioRepository.save(usuario);
+
+    return new UsuarioDto(
+        usuarioDb.getId(), 
+        usuarioDb.getNome(), 
+        usuarioDb.getCpf(), 
+        usuarioDb.getEmail(), 
+        usuarioDb.getSenha(), 
+        usuarioDb.getDateRegister(), 
+        usuarioDb.getRole()
+    );
     }
 
     public void deleteUsuario(UsuarioDto usuarioDto) {
